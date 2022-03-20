@@ -77,7 +77,7 @@ public class SingleSlotService {
         transaction.setTransactionId(request.getTransactionId());
         if (bonusHolder.get() > 0) {
             bonusHolder.decrementAndGet();
-            transaction.setTransactionType(TransactionType.PROM_WITHDRAWAL);
+            transaction.setTransactionType(TransactionType.PROMO_WITHDRAWAL);
         } else {
             transaction.setTransactionType(TransactionType.WITHDRAWAL);
             account.setBalance(BigDecimal.valueOf(account.getBalance()).subtract(BigDecimal.valueOf(request.getAmount())).doubleValue());
