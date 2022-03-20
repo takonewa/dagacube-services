@@ -5,21 +5,22 @@ import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.stream.Collectors;
 
 @Log
 @Controller
 @ControllerAdvice
-public class ExceptionsResource extends ResponseEntityExceptionHandler {
+public class ExceptionsResource{
 
     private static final String REASON_HEADER = "reason";
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity handle(Exception exception) {
-        exception.printStackTrace();
         return ResponseEntity.status(500)
                 .headers(headers -> headers.add(REASON_HEADER, exception.getMessage()))
                 .build();
@@ -60,6 +61,17 @@ public class ExceptionsResource extends ResponseEntityExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        String errorMessage = exception.getBindingResult()
+                .getAllErrors().stream()
+                .map(e -> String.format("%s - %s", e.getObjectName(), e.getDefaultMessage()))
+                .sorted()
+                .collect(Collectors.joining(", "));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(headers -> headers.add(REASON_HEADER, errorMessage))
+                .build();
+    }
     @GetMapping("/")
     public String index() {
         return ("redirect:/swagger-ui.html");

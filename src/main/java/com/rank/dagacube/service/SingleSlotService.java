@@ -79,7 +79,7 @@ public class SingleSlotService {
             bonusHolder.decrementAndGet();
             transaction.setTransactionType(TransactionType.PROM_WITHDRAWAL);
         } else {
-            transaction.setTransactionType(TransactionType.WINNING);
+            transaction.setTransactionType(TransactionType.WITHDRAWAL);
             account.setBalance(BigDecimal.valueOf(account.getBalance()).subtract(BigDecimal.valueOf(request.getAmount())).doubleValue());
         }
         transactionRepository.save(transaction);

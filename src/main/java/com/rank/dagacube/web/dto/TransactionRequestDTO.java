@@ -14,5 +14,5 @@ public class TransactionRequestDTO implements Serializable {
     private String transactionId;
     @NotNull(message = "Amount is a mandatory field")
     @Positive(message = "Amount should be greater than 0")
-    private double amount;
+    private Double amount;
 }
